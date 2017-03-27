@@ -4,9 +4,6 @@ from scipy.signal import savgol_filter
 from matplotlib import pyplot as plt
 
 
-# First we'll need to filter our data:
-
-
 def filter_df(dataframe):
     # Convert the dataframe into an numpy.ndarray
     # EXCLUDING the timestamp column
