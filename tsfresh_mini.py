@@ -18,6 +18,41 @@ def filter_df(dataframe):
     return arr_new
 
 
+def global_min(dataframe):
+    return 1  # should be an array-like object with tag, minimum, timestamp
+
+
+def global_max(dataframe):
+    return 1  # should be an array-like object with tag, maximum, timestamp
+
+
+def local_minima(dataframe):
+    return 1  # should be an array-like object with tag, local minima, timestamp
+
+
+def local_maxima(dataframe):
+    return 1  # should be an array-like object with tag, local maxima, timestamp
+
+
+def median(dataframe):
+    return 1  # should be an array-like object with tag, median
+
+
+def ari_mean(dataframe):
+    return 1  # should be an array-like object with tag, arithmetic mean
+
+
+def geo_mean(dataframe):
+    return 1  # should be an array-like object with tag, geometric mean
+
+
+def variance(dataframe):
+    return 1  # should be an array-like object with tag, standard deviation
+
+def std_dev(dataframe):
+    return 1  # should be an array-like object with tag, variance
+
+
 def test_mini():
     DF = pd.read_csv('CV_50_100.csv')
     T = [i for i in range(len(DF))]
