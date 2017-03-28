@@ -5,6 +5,10 @@ from matplotlib import pyplot as plt
 import copy
 
 
+def check_constant(lst):
+    return all(x == lst[0] for x in lst)
+
+
 def filter_df(dataframe):
     # Convert the dataframe into an numpy.ndarray
     # EXCLUDING the timestamp column
@@ -18,7 +22,6 @@ def filter_df(dataframe):
 
 
 def arr_to_df(arr, headings):
-
     dfdict = {}
 
     for i, h in enumerate(headings):
@@ -27,6 +30,7 @@ def arr_to_df(arr, headings):
     DF = pd.DataFrame(dfdict)
 
     return DF
+
 
 def global_min(dataframe):
     points = []
@@ -72,6 +76,11 @@ def std_dev(dataframe):
     return 1  # should be an array-like object with tag, variance
 
 
+def extract_features(dataframe):  # Requires a dataframe with no timestamp, and no headers
+    features = []
+    return features  # should return a list of all features with tag, timestampINDEX, value
+
+
 def test_mini():
     DF = pd.read_csv('CV_50_100.csv')
 
@@ -90,8 +99,6 @@ def test_mini():
     This bit isn't completely accurate yet.
     If the values in a list doesn't change, by default no features should occur (i.e. set point values)
     Since for a constant thing all things are constant
-    Also, the functions should be written to use the Filtered data, 
-    NOT the original pd.DataFrame
     """
     features = features + testmin
     print(testmin)
