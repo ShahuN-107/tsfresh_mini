@@ -88,7 +88,6 @@ def extract_features(dataframe):  # Requires a dataframe with no timestamp, and 
 
 
 def test_mini():
-
     DF = pd.read_csv('CV_50_100.csv')
 
     T = [i for i in range(len(DF))]
