@@ -9,26 +9,32 @@ def check_constant(lst):
     return all(x == lst[0] for x in lst)
 
 
+def remove_constants(dataframe, headers):
+    for i in headers:
+        _lst = dataframe[i].as_matrix()
+        if check_constant(_lst):
+            del dataframe[i]
+            del headers[headers.index(i)]
+    return dataframe, headers
+
+
 def filter_df(dataframe):
     # Convert the dataframe into an numpy.ndarray
     # EXCLUDING the timestamp column
-    headers = list(dataframe)
-    arr = dataframe.as_matrix(headers)
-
+    headers_ = list(dataframe)
+    # Remove Constants
+    arr_new__, headers = remove_constants(dataframe, headers_)
     # Apply filter over the Array columns
-    arr_new = savgol_filter(arr, 11, 1, axis=0)
-
-    return arr_new
+    arr_new_ = savgol_filter(arr_new__, 11, 1, axis=0)
+    dataframe_new = arr_to_df(arr_new_, headers)
+    return dataframe_new, headers
 
 
 def arr_to_df(arr, headings):
     dfdict = {}
-
     for i, h in enumerate(headings):
         dfdict[h] = arr[:, i]
-
     DF = pd.DataFrame(dfdict)
-
     return DF
 
 
@@ -82,6 +88,7 @@ def extract_features(dataframe):  # Requires a dataframe with no timestamp, and 
 
 
 def test_mini():
+
     DF = pd.read_csv('CV_50_100.csv')
 
     T = [i for i in range(len(DF))]
@@ -90,27 +97,23 @@ def test_mini():
     DF_nostamp = copy.copy(DF)
     del DF_nostamp[headers[0]]
     del (headers[0])
+    """
+    I might have to add a function to remove the timestamp from data,
+    since it could be the case that it is parsed through from Evert.
+    """
 
-    test = filter_df(DF)
-    newDF = arr_to_df(test, headers)
-    print(newDF)
-    testmin = global_min(newDF)
-    """
-    This bit isn't completely accurate yet.
-    If the values in a list doesn't change, by default no features should occur (i.e. set point values)
-    Since for a constant thing all things are constant
-    """
+    test, headers = filter_df(DF)
+    testmin = global_min(test)
     features = features + testmin
-    print(testmin)
     plt.figure()
-    subp_index = 330
+    subp_index = 320
 
     for i in range(len(headers)):
         subp = subp_index + i + 1
         plt.subplot(subp)
         plt.title(headers[i])
         plt.plot(T, DF[headers[i]], label='Unfiltered')
-        plt.plot(T, test[:, i], label='Filtered')
+        plt.plot(T, test[headers[i]], label='Filtered')
 
         for j in features:
             if headers[i] == j[0]:
