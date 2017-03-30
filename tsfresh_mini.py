@@ -103,7 +103,7 @@ def extract_features(__dataframe):
 
     __dataframe_filtered, headers = _filter_df_(__dataframe)
     features += _global_max_(__dataframe_filtered)
-    features += _global_max_(__dataframe_filtered)
+    features += _global_min_(__dataframe_filtered)
     features += _median_(__dataframe_filtered)
     features += _mean_(__dataframe_filtered)
     return features, headers, tindex, __dataframe_filtered
