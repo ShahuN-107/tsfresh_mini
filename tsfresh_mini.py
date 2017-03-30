@@ -9,21 +9,26 @@ def check_constant(lst):
     return all(x == lst[0] for x in lst)
 
 
-def remove_constants(dataframe, headers):
-    for i in headers:
-        _lst = dataframe[i].as_matrix()
+def remove_constants(_dataframe, _headers):
+    print(_headers)
+    g = enumerate(_headers)
+    print([(i, h) for i, h in g])
+    for i, h in enumerate(_headers):
+        print(i, h)
+        _lst = _dataframe[h].as_matrix()
         if check_constant(_lst):
-            del dataframe[i]
-            del headers[headers.index(i)]
-    return dataframe, headers
+            print(h, 'is constant')
+            del _dataframe[h]
+            del _headers[i]
+    return _dataframe, _headers
 
 
-def filter_df(dataframe):
+def filter_df(_dataframe):
     # Convert the dataframe into an numpy.ndarray
     # EXCLUDING the timestamp column
-    headers_ = list(dataframe)
+    _headers = list(_dataframe)
     # Remove Constants
-    arr_new__, headers = remove_constants(dataframe, headers_)
+    arr_new__, headers = remove_constants(_dataframe, _headers)
     # Apply filter over the Array columns
     arr_new_ = savgol_filter(arr_new__, 11, 1, axis=0)
     dataframe_new = arr_to_df(arr_new_, headers)
@@ -34,6 +39,7 @@ def arr_to_df(arr, headings):
     dfdict = {}
     for i, h in enumerate(headings):
         dfdict[h] = arr[:, i]
+    # dfdict = dict(zip(headings, arr)) found this method, but having issues slicing arr in one liner
     DF = pd.DataFrame(dfdict)
     return DF
 
@@ -45,13 +51,21 @@ def global_min(dataframe):
     min_index = dataframe.idxmin(0)
 
     for i, h in enumerate(headers):
-        points.append([h, min_index[h], min_vals[h]])
+        points.append([h, min_index[h], min_vals[h], 'Global Minimum'])
 
     return points  # should be an array-like object with tag, minimum, timestamp
 
 
 def global_max(dataframe):
-    return 1  # should be an array-like object with tag, maximum, timestamp
+    points = []
+    headers = list(dataframe)
+    max_vals = dataframe.max()
+    max_index = dataframe.idxmax(0)
+
+    for i, h in enumerate(headers):
+        points.append([h, max_index[h], max_vals[h], 'Global Maximum'])
+
+    return points  # should be an array-like object with tag, maximum, timestamp
 
 
 def local_minima(dataframe):
@@ -95,7 +109,8 @@ def test_mini():
 
     test, headers = filter_df(DF)
     testmin = global_min(test)
-    features = features + testmin
+    testmax = global_max(test)
+    features = features + testmin + testmax
     plt.figure()
     subp_index = 320
 
@@ -108,8 +123,7 @@ def test_mini():
 
         for j in features:
             if h == j[0]:
-                plt.plot(j[1], j[2], '*', label='Glob_min')
-
+                plt.plot(j[1], j[2], '*', label=j[3])
     plt.legend(loc='best')
     plt.show()
 
