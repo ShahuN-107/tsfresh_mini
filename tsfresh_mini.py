@@ -90,7 +90,7 @@ def extract_features(dataframe):  # Requires a dataframe with no timestamp, and 
 def test_mini():
     DF = pd.read_csv('CV_50_100.csv')
 
-    T = [i for i in range(len(DF))]
+    tindex = [i for i in range(len(DF))]
     features = []
     headers = list(DF)
     DF_nostamp = copy.copy(DF)
@@ -107,12 +107,12 @@ def test_mini():
     plt.figure()
     subp_index = 320
 
-    for i in range(len(headers)):
+    for i, h in enumerate(headers):
         subp = subp_index + i + 1
         plt.subplot(subp)
-        plt.title(headers[i])
-        plt.plot(T, DF[headers[i]], label='Unfiltered')
-        plt.plot(T, test[headers[i]], label='Filtered')
+        plt.title(h)
+        plt.plot(tindex, DF[h], label='Unfiltered')
+        plt.plot(tindex, test[h], label='Filtered')
 
         for j in features:
             if headers[i] == j[0]:
