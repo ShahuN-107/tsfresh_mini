@@ -4,7 +4,6 @@ from scipy.signal import savgol_filter
 import copy
 
 
-
 def _check_constant_(_lst):
     return all(x == _lst[0] for x in _lst)
 
