@@ -79,9 +79,9 @@ def _median_(_dataframe):
 def _mean_(_dataframe):
     points = []
     headers = list(_dataframe)
-    mean_vals = _dataframe.median()
+    mean_vals = _dataframe.mean()
     for i, h in enumerate(headers):
-        points.append([h, 'line', mean_vals[h], 'Median'])
+        points.append([h, 'line', mean_vals[h], 'Mean'])
     return points
 
 
@@ -108,7 +108,8 @@ def test_mini():
     testmin = _global_min_(test)
     testmax = _global_max_(test)
     testmedian = _median_(test)
-    features = features + testmin + testmax
+    testmean = _mean_(test)
+    features = features + testmin + testmax + testmedian + testmean
     plt.figure()
     subp_index = 320
 
@@ -121,7 +122,10 @@ def test_mini():
 
         for j in features:
             if h == j[0]:
-                plt.plot(j[1], j[2], '*', label=j[3])
+                if j[1] == 'line':
+                    plt.plot([tindex[0], tindex[-1]], [j[2], j[2]], '-', label=j[3])
+                else:
+                    plt.plot(j[1], j[2], '*', label=j[3])
     plt.legend(loc='best')
     plt.show()
 
