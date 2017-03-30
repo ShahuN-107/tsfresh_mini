@@ -60,11 +60,11 @@ def _global_max_(_dataframe):
 
 
 def _local_minima_(_dataframe):
-    return 1  # should be an array-like object with tag, local minima, timestamp
+    return 1
 
 
 def _local_maxima_(_dataframe):
-    return 1  # should be an array-like object with tag, local maxima, timestamp
+    return 1
 
 
 def _median_(_dataframe):
@@ -73,7 +73,7 @@ def _median_(_dataframe):
     median_vals = _dataframe.median()
     for i, h in enumerate(headers):
         points.append([h, 'line', median_vals[h], 'Median'])
-    return points  # should be an array-like object with tag, median
+    return points
 
 
 def _mean_(_dataframe):
@@ -82,12 +82,12 @@ def _mean_(_dataframe):
     mean_vals = _dataframe.median()
     for i, h in enumerate(headers):
         points.append([h, 'line', mean_vals[h], 'Median'])
-    return points  # should be an array-like object with tag, median  # should be an array-like object with tag, arithmetic mean
+    return points
 
 
-def extract_features(_dataframe):  # Requires a dataframe with no timestamp, and no headers
+def extract_features(_dataframe):
     features = []
-    return features  # should return a list of all features with tag, timestampINDEX, value
+    return features
 
 
 def test_mini():
