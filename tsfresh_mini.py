@@ -97,6 +97,9 @@ def extract_features(__dataframe):
     """
     I might have to add a function to remove the timestamp from data,
     since it could be the case that it is parsed through from Evert.
+    This is quick and easy (and essentially done above).
+    
+    Also, this library assumes a continuous dataframe is given as input.
     """
 
     __dataframe_filtered, headers = _filter_df_(__dataframe)
