@@ -3,6 +3,7 @@ from scipy.signal import savgol_filter
 # https://docs.scipy.org/doc/scipy-0.18.1/reference/generated/scipy.signal.savgol_filter.html
 from matplotlib import pyplot as plt
 import copy
+import time
 
 
 def _check_constant_(_lst):
@@ -85,31 +86,31 @@ def _mean_(_dataframe):
     return points
 
 
-def extract_features(_dataframe):
+def extract_features(__dataframe):
+    tindex = [i for i in range(len(__dataframe))]
     features = []
-    return features
-
-
-def test_mini():
-    DF = pd.read_csv('CV_50_100.csv')
-
-    tindex = [i for i in range(len(DF))]
-    features = []
-    headers = list(DF)
-    DF_nostamp = copy.copy(DF)
+    headers = list(__dataframe)
+    DF_nostamp = copy.copy(__dataframe)
     del DF_nostamp[headers[0]]
     del (headers[0])
+
     """
     I might have to add a function to remove the timestamp from data,
     since it could be the case that it is parsed through from Evert.
     """
 
-    test, headers = _filter_df_(DF)
-    testmin = _global_min_(test)
-    testmax = _global_max_(test)
-    testmedian = _median_(test)
-    testmean = _mean_(test)
-    features = features + testmin + testmax + testmedian + testmean
+    __dataframe_filtered, headers = _filter_df_(__dataframe)
+    features += _global_max_(__dataframe_filtered)
+    features += _global_max_(__dataframe_filtered)
+    features += _median_(__dataframe_filtered)
+    features += _mean_(__dataframe_filtered)
+    return features, headers, tindex, __dataframe_filtered
+
+
+def _test_mini_():
+    DF = pd.read_csv('CV_50_100.csv')
+    features, headers, tindex, DF_filtered = extract_features(DF)
+
     plt.figure()
     subp_index = 320
 
@@ -118,7 +119,7 @@ def test_mini():
         plt.subplot(subp)
         plt.title(h)
         plt.plot(tindex, DF[h], label='Unfiltered')
-        plt.plot(tindex, test[h], label='Filtered')
+        plt.plot(tindex, DF_filtered[h], label='Filtered')
 
         for j in features:
             if h == j[0]:
@@ -130,5 +131,23 @@ def test_mini():
     plt.show()
 
 
+def _test_time_():
+    DF = pd.read_csv('CV_50_100.csv')
+    features, headers, tindex, DF_filtered = extract_features(DF)
+
+
 if __name__ == '__main__':
-    test_mini()
+    _test_mini_()
+
+    time_it = False
+    if time_it:
+        start = time.clock()
+        for i in range(1000):
+            _test_time_()
+        end = time.clock()
+        time = (end - start) / 1000
+        # note that this method may be inaccurate due to background processes occurring.
+        # i.e. anything else that occupies the CPU will slow this down and produce an inaccurate result
+        print(time)
+
+
