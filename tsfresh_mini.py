@@ -5,8 +5,8 @@ from matplotlib import pyplot as plt
 import copy
 
 
-def _check_constant_(lst):
-    return all(x == lst[0] for x in lst)
+def _check_constant_(_lst):
+    return all(x == _lst[0] for x in _lst)
 
 
 def _remove_constants_(_dataframe, _headers):
@@ -26,10 +26,10 @@ def _filter_df_(_dataframe):
     return dataframe_new, _headers
 
 
-def _arr_to_df_(arr, headings):
+def _arr_to_df_(_arr, _headings):
     dfdict = {}
-    for i, h in enumerate(headings):
-        dfdict[h] = arr[:, i]
+    for i, h in enumerate(_headings):
+        dfdict[h] = _arr[:, i]
     # dfdict = dict(zip(headings, arr)) found this method, but having issues slicing arr in one liner
     DF = pd.DataFrame(dfdict)
     return DF
