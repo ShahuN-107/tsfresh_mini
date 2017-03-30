@@ -1,9 +1,8 @@
 import pandas as pd
 from scipy.signal import savgol_filter
 # https://docs.scipy.org/doc/scipy-0.18.1/reference/generated/scipy.signal.savgol_filter.html
-from matplotlib import pyplot as plt
 import copy
-import time
+
 
 
 def _check_constant_(_lst):
@@ -114,6 +113,8 @@ def _test_mini_():
     DF = pd.read_csv('CV_50_100.csv')
     features, headers, tindex, DF_filtered = extract_features(DF)
 
+    from matplotlib import pyplot as plt
+
     plt.figure()
     subp_index = 320
 
@@ -144,6 +145,7 @@ if __name__ == '__main__':
 
     time_it = False
     if time_it:
+        import time
         start = time.clock()
         for k in range(1000):
             _test_time_()
