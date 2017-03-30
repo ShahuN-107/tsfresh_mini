@@ -142,7 +142,7 @@ if __name__ == '__main__':
     time_it = False
     if time_it:
         start = time.clock()
-        for i in range(1000):
+        for k in range(1000):
             _test_time_()
         end = time.clock()
         time = (end - start) / 1000
