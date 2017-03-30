@@ -74,14 +74,6 @@ def geo_mean(dataframe):
     return 1  # should be an array-like object with tag, geometric mean
 
 
-def variance(dataframe):
-    return 1  # should be an array-like object with tag, standard deviation
-
-
-def std_dev(dataframe):
-    return 1  # should be an array-like object with tag, variance
-
-
 def extract_features(dataframe):  # Requires a dataframe with no timestamp, and no headers
     features = []
     return features  # should return a list of all features with tag, timestampINDEX, value
