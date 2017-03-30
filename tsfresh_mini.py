@@ -152,5 +152,3 @@ if __name__ == '__main__':
         # note that this method may be inaccurate due to background processes occurring.
         # i.e. anything else that occupies the CPU will slow this down and produce an inaccurate result
         print(time)
-
-
