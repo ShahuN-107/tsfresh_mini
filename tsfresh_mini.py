@@ -107,7 +107,7 @@ def test_mini():
         plt.plot(tindex, test[h], label='Filtered')
 
         for j in features:
-            if headers[i] == j[0]:
+            if h == j[0]:
                 plt.plot(j[1], j[2], '*', label='Glob_min')
 
     plt.legend(loc='best')
