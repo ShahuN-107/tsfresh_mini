@@ -5,76 +5,87 @@ from matplotlib import pyplot as plt
 import copy
 
 
-def check_constant(lst):
+def _check_constant_(lst):
     return all(x == lst[0] for x in lst)
 
 
-def remove_constants(dataframe, headers):
-    for i in headers:
-        _lst = dataframe[i].as_matrix()
-        if check_constant(_lst):
-            del dataframe[i]
-            del headers[headers.index(i)]
-    return dataframe, headers
+def _remove_constants_(_dataframe, _headers):
+    for i, h in enumerate(_headers):
+        _lst = _dataframe[h].as_matrix()
+        if _check_constant_(_lst):
+            del _dataframe[h]
+            del _headers[i]
+    return _dataframe, _headers
 
 
-def filter_df(dataframe):
-    # Convert the dataframe into an numpy.ndarray
-    # EXCLUDING the timestamp column
-    headers_ = list(dataframe)
-    # Remove Constants
-    arr_new__, headers = remove_constants(dataframe, headers_)
-    # Apply filter over the Array columns
+def _filter_df_(_dataframe):
+    __headers = list(_dataframe)
+    arr_new__, _headers = _remove_constants_(_dataframe, __headers)
     arr_new_ = savgol_filter(arr_new__, 11, 1, axis=0)
-    dataframe_new = arr_to_df(arr_new_, headers)
-    return dataframe_new, headers
+    dataframe_new = _arr_to_df_(arr_new_, _headers)
+    return dataframe_new, _headers
 
 
-def arr_to_df(arr, headings):
+def _arr_to_df_(arr, headings):
     dfdict = {}
     for i, h in enumerate(headings):
         dfdict[h] = arr[:, i]
+    # dfdict = dict(zip(headings, arr)) found this method, but having issues slicing arr in one liner
     DF = pd.DataFrame(dfdict)
     return DF
 
 
-def global_min(dataframe):
+def _global_min_(_dataframe):
     points = []
-    headers = list(dataframe)
-    min_vals = dataframe.min()
-    min_index = dataframe.idxmin(0)
+    headers = list(_dataframe)
+    min_vals = _dataframe.min()
+    min_index = _dataframe.idxmin(0)
 
     for i, h in enumerate(headers):
-        points.append([h, min_index[h], min_vals[h]])
+        points.append([h, min_index[h], min_vals[h], 'Global Minimum'])
 
-    return points  # should be an array-like object with tag, minimum, timestamp
-
-
-def global_max(dataframe):
-    return 1  # should be an array-like object with tag, maximum, timestamp
+    return points
 
 
-def local_minima(dataframe):
+def _global_max_(_dataframe):
+    points = []
+    headers = list(_dataframe)
+    max_vals = _dataframe.max()
+    max_index = _dataframe.idxmax(0)
+
+    for i, h in enumerate(headers):
+        points.append([h, max_index[h], max_vals[h], 'Global Maximum'])
+
+    return points
+
+
+def _local_minima_(_dataframe):
     return 1  # should be an array-like object with tag, local minima, timestamp
 
 
-def local_maxima(dataframe):
+def _local_maxima_(_dataframe):
     return 1  # should be an array-like object with tag, local maxima, timestamp
 
 
-def median(dataframe):
-    return 1  # should be an array-like object with tag, median
+def _median_(_dataframe):
+    points = []
+    headers = list(_dataframe)
+    median_vals = _dataframe.median()
+    for i, h in enumerate(headers):
+        points.append([h, 'line', median_vals[h], 'Median'])
+    return points  # should be an array-like object with tag, median
 
 
-def ari_mean(dataframe):
-    return 1  # should be an array-like object with tag, arithmetic mean
+def _mean_(_dataframe):
+    points = []
+    headers = list(_dataframe)
+    mean_vals = _dataframe.median()
+    for i, h in enumerate(headers):
+        points.append([h, 'line', mean_vals[h], 'Median'])
+    return points  # should be an array-like object with tag, median  # should be an array-like object with tag, arithmetic mean
 
 
-def geo_mean(dataframe):
-    return 1  # should be an array-like object with tag, geometric mean
-
-
-def extract_features(dataframe):  # Requires a dataframe with no timestamp, and no headers
+def extract_features(_dataframe):  # Requires a dataframe with no timestamp, and no headers
     features = []
     return features  # should return a list of all features with tag, timestampINDEX, value
 
@@ -93,9 +104,11 @@ def test_mini():
     since it could be the case that it is parsed through from Evert.
     """
 
-    test, headers = filter_df(DF)
-    testmin = global_min(test)
-    features = features + testmin
+    test, headers = _filter_df_(DF)
+    testmin = _global_min_(test)
+    testmax = _global_max_(test)
+    testmedian = _median_(test)
+    features = features + testmin + testmax
     plt.figure()
     subp_index = 320
 
@@ -108,8 +121,7 @@ def test_mini():
 
         for j in features:
             if h == j[0]:
-                plt.plot(j[1], j[2], '*', label='Glob_min')
-
+                plt.plot(j[1], j[2], '*', label=j[3])
     plt.legend(loc='best')
     plt.show()
 
