@@ -1,8 +1,6 @@
 import pandas as pd
 from scipy.signal import savgol_filter
 import numpy as np
-from scipy.stats.mstats import zscore
-# https://docs.scipy.org/doc/scipy-0.18.1/reference/generated/scipy.signal.savgol_filter.html
 import copy
 
 
@@ -80,7 +78,6 @@ def filter_peaks(_lst, peak_width, width):
                     lst.append(_container_)
                 _container_ = []
 
-
     for i, v in enumerate(lst):
 
         temp = np.array(v)
@@ -110,12 +107,12 @@ def moving_filter(__vals, _threshold, width, peak_width):
 
             if v > scope[0] and v > scope[-1]:
 
-                if v > avg + std_dev*_threshold:
+                if v > avg + std_dev * _threshold:
                     lst.append([i, v, 'max'])
 
             elif v < scope[0] and v < scope[-1]:
 
-                if v < avg - std_dev*_threshold:
+                if v < avg - std_dev * _threshold:
                     lst.append([i, v, 'min'])
 
     _lst = filter_peaks(lst, peak_width, width)
@@ -157,15 +154,14 @@ def extract_features(__dataframe):
     """
 
     __dataframe_filtered, headers = _filter_df_(__dataframe)
+
     for i in headers:
         minmax = moving_filter(__dataframe[i].as_matrix().tolist(), 2, 150, 3)
         for j in range(len(minmax)):
             minmax[j].insert(0, i)
         features += minmax
 
-    # min_max = mins_maxs(__dataframe_filtered, headers)
     features += _global_max_(__dataframe)
-
     features += _global_min_(__dataframe)
     features += _median_(__dataframe)
     features += _mean_(__dataframe)
@@ -175,7 +171,7 @@ def extract_features(__dataframe):
 
 def _test_mini_():
     DF = pd.read_csv('CV_50_100.csv')
-    features, headers, tindex, DF_filtered= extract_features(DF)
+    features, headers, tindex, DF_filtered = extract_features(DF)
 
     from matplotlib import pyplot as plt
 
@@ -213,6 +209,7 @@ if __name__ == '__main__':
     time_it = False
     if time_it:
         import time
+
         start = time.clock()
         for k in range(1000):
             _test_time_()
