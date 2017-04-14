@@ -1,11 +1,13 @@
 import pandas as pd
 from scipy.signal import savgol_filter
+import numpy as np
+from scipy.stats.mstats import zscore
 # https://docs.scipy.org/doc/scipy-0.18.1/reference/generated/scipy.signal.savgol_filter.html
 import copy
 
 
 def _check_constant_(_lst):
-    return all(x == _lst[0] for x in _lst)
+    return all(round(x, 6) == round(_lst[0], 6) for x in _lst)
 
 
 def _remove_constants_(_dataframe, _headers):
@@ -58,12 +60,66 @@ def _global_max_(_dataframe):
     return points
 
 
-def _local_minima_(_dataframe):
-    return 1
+def filter_peaks(_lst, peak_width, width):
+    lst = []
+    features = []
+    _container_ = []
+
+    for i, v in enumerate(_lst):
+
+        if i == 0:
+            _container_.append(v)
+
+        if i > 0:
+
+            if _lst[i][0] - _lst[i - 1][0] < width:
+                _container_.append(v)
+
+            else:
+                if len(_container_) != 0:
+                    lst.append(_container_)
+                _container_ = []
 
 
-def _local_maxima_(_dataframe):
-    return 1
+    for i, v in enumerate(lst):
+
+        temp = np.array(v)
+
+        if len(temp[:, 1]) > peak_width:
+            if temp[:, 2][0] == 'max':
+                _max_ = float(max(temp[:, 1]))
+                index = temp[:, 0][np.argmax(temp[:, 1])]
+                features.append([index, _max_, 'Local Maximum'])
+            elif temp[:, 2][0] == 'min':
+                _min_ = float(min(temp[:, 1]))
+                index = temp[:, 0][np.argmin(temp[:, 1])]
+                features.append([index, _min_, 'Local Minimum'])
+
+    return features
+
+
+def moving_filter(__vals, _threshold, width, peak_width):
+    lst = []
+
+    for i, v in enumerate(__vals):
+        if width <= i <= len(__vals) - width:
+            scope = __vals[i - width: i + width]
+
+            std_dev = np.std(scope)
+            avg = sum(scope) / len(scope)
+
+            if v > scope[0] and v > scope[-1]:
+
+                if v > avg + std_dev*_threshold:
+                    lst.append([i, v, 'max'])
+
+            elif v < scope[0] and v < scope[-1]:
+
+                if v < avg - std_dev*_threshold:
+                    lst.append([i, v, 'min'])
+
+    _lst = filter_peaks(lst, peak_width, width)
+    return _lst
 
 
 def _median_(_dataframe):
@@ -101,16 +157,25 @@ def extract_features(__dataframe):
     """
 
     __dataframe_filtered, headers = _filter_df_(__dataframe)
-    features += _global_max_(__dataframe_filtered)
-    features += _global_min_(__dataframe_filtered)
-    features += _median_(__dataframe_filtered)
-    features += _mean_(__dataframe_filtered)
+    for i in headers:
+        minmax = moving_filter(__dataframe[i].as_matrix().tolist(), 2, 150, 3)
+        for j in range(len(minmax)):
+            minmax[j].insert(0, i)
+        features += minmax
+
+    # min_max = mins_maxs(__dataframe_filtered, headers)
+    features += _global_max_(__dataframe)
+
+    features += _global_min_(__dataframe)
+    features += _median_(__dataframe)
+    features += _mean_(__dataframe)
+
     return features, headers, tindex, __dataframe_filtered
 
 
 def _test_mini_():
     DF = pd.read_csv('CV_50_100.csv')
-    features, headers, tindex, DF_filtered = extract_features(DF)
+    features, headers, tindex, DF_filtered= extract_features(DF)
 
     from matplotlib import pyplot as plt
 
@@ -129,7 +194,10 @@ def _test_mini_():
                 if j[1] == 'line':
                     plt.plot([tindex[0], tindex[-1]], [j[2], j[2]], '-', label=j[3])
                 else:
-                    plt.plot(j[1], j[2], '*', label=j[3])
+                    if j[3] == 'Global Maximum' or j[3] == 'Global Minimum':
+                        plt.plot(j[1], j[2], '*', label=j[3])
+                    else:
+                        plt.plot(j[1], j[2], 'o', label=j[3])
     plt.legend(loc='best')
     plt.show()
 
